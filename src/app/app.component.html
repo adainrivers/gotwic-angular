@@ -1,0 +1,336 @@
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div>
+      <h1 id="tavernfriendshipcalculator">Tavern Friendship Calculator</h1>
+
+      <h4 id="forgameofthroneswinteriscomingbrowsergame">for Game of Thrones - Winter is Coming Browser Game</h4>
+
+      <h2 id="whatisitfor">What is it for?</h2>
+
+      <ul>
+        <li>To perfectly distribute gifts to commanders for max benefit.</li>
+
+        <li>To help to decide which commander to upgrade / unlock next.</li>
+      </ul>
+
+      <h2 id="howtouse">How to use?</h2>
+
+      <h3 id="firsttimesetup">First time setup</h3>
+
+      <ol>
+        <li>If you have more than one accounts, you should create a profile for each account, if not you can skip this
+          step:</li>
+
+        <ul>
+          <li>Click to the <em>'Add Profile</em>'* button at the top.</li>
+
+          <li>Enter the profile name (for example, you can use the in-game name) and click <em>'Okay'</em>.</li>
+
+          <li>Repeat the two above steps for each account you have.</li>
+
+          <li>After your done with adding all your accounts, select the 'default' profile from the profiles dropdown at
+            the top bar and click <em>'Delete Profile'</em>.</li>
+        </ul>
+
+        <li>Now you have to enter your commander data:</li>
+
+        <ul>
+          <li>
+            (If you have more than one profiles) Select the profile you want to work on
+          </li>
+
+          <li>
+            Open the <em>'Commander'</em> screen in the game (Press H)
+          </li>
+
+          <li>
+            Switch to the calculator
+          </li>
+
+          <li>
+            Select the <em>'Quality'</em> value for each commander you have unlocked in the game.
+          </li>
+
+          <li>
+            Open the <em>'Tavern'</em>, switch to <em>'Friendship'</em> tab.
+          </li>
+
+          <li>
+            Switch to the calculator.
+          </li>
+
+          <li>
+            Enter the <em>'Friendship Level'</em> for each commander you have in the tavern.
+          </li>
+
+          <li>
+            Set the 'Weights' in the calculator (See What are the 'Weights' section below)
+          </li>
+        </ul>
+      </ol>
+
+      <h3 id="everydayuse">Everyday use</h3>
+
+      <ul>
+        <li>When you want to spend the gifts, follow the steps below:</li>
+
+        <ol>
+          <li>Look at your gifts and determine which gift you are gonna use.</li>
+
+          <li>In the calculator, on the right side, find the section relevant to the gift you are gonna use.</li>
+
+          <li>The <strong>commander with the highest value</strong> next to him benefits most from that gift.</li>
+
+          <li>After using the gift(s), if the level of the commander changed, update that commander's level in the
+            calculator.</li>
+
+          <li>Repeat steps 1 to 4 for all the gifts you have.</li>
+        </ol>
+      </ul>
+
+      <h2 id="whataretheweights">What are the 'Weights'?</h2>
+      <blockquote>
+        <p>Weights are the way for you to customize the calculation which determines the best commander per gift. </p>
+
+        <p>For example, if you are on the path of unlocking T4s, you would need a lot of speedups and gold, therefore
+          you
+          should prioritize Aptitude and Finance over the rest. In that case you should put higher values to these two
+          weights than the other three.</p>
+
+        <p>Another example, if you already have your T4s unlocked and you are looking for more PvP power, you should
+          prioritize Combat much more over all other stats, followed by Leadership, Combat and Aptitude. At this point,
+          you might even skip finance by setting it's value to 0.</p>
+      </blockquote>
+    </div>
+  </div>
+
+</div>
+<div class="container"
+  style="justify-content: space-between; align-items: center; background-color: brown; padding: 10px; margin-bottom: 8px; padding-left: 20px;padding-right: 20px;">
+  <div style="font-size: 20px; font-family: 'Game of Thrones'; color: wheat;">Friendship Calculator</div>
+  <div>
+    <select (change)="currentProfileId = $event.target.value; changeProfile();"
+      style="background-color: wheat; padding: 3px;">
+      <option *ngFor="let profile of profiles" value="{{ profile }}" [selected]="currentProfileId == profile">
+        {{ profile }}</option>
+    </select>
+    <button (click)="askProfile()" class="pure-button"><i class="fa fa-plus"></i> Add Profile</button>
+    <button (click)="deleteProfile()" class="pure-button" *ngIf="profiles.length > 1"><i class="fa fa-minus"></i> Delete
+      Profile</button>
+  </div>
+  <div>
+    <button (click)="exportData()" class="pure-button"><i class="fa fa-download"></i> Export Profile</button>
+    <button (click)="importData()" class="pure-button"><i class="fa fa-upload"></i> Import Profile</button>
+    <input style="display: none;" type="file" id="input" accept=".json" (change)="handleFiles($event.target.files)">
+    <button (click)="resetData()" class="pure-button"><i class="fa fa-trash"></i> Reset Profile</button>
+  </div>
+  <div>
+    <button class="pure-button" id="myBtn" (click)="showGuide()"><i class="fa fa-question"></i> Guide</button>
+    <a class="pure-button" href="https://forms.gle/D5VUqLficxJJXjoc9" target="_new"><i class="fa fa-comments-o"></i>
+      Feedback</a>
+    <a class="pure-button" href="https://discord.gg/QWbyyKT" target="_new"><i class="fa fa-comments"></i> Discord</a>
+
+  </div>
+</div>
+<div class="container" style="margin-bottom: 20px;">
+  <div class="row">
+    <table class="pure-table">
+      <thead>
+        <tr style="font-size: 11pt;">
+          <th scope="col">Name</th>
+          <th scope="col">Prefered Gift</th>
+          <th scope="col">Aptitude</th>
+          <th scope="col">Finance</th>
+          <th scope="col">Command</th>
+          <th scope="col">Combat</th>
+          <th scope="col">Leadership</th>
+          <th scope="col">
+            <div class="container" style="justify-content: space-between;">Quality <i class="fa fa-question" tippy
+                [tippyOptions]="{
+              arrow: true,
+              content: 'The quality of commander (not the current affection level)',
+              trigger: 'click'
+            }"></i></div>
+          </th>
+          <th scope="col">
+            <div class="container" style="justify-content: space-between;">Friendship Level&nbsp;<i
+                class="fa fa-question" tippy [tippyOptions]="{
+              arrow: true,
+              content: 'Current friendship level of the commander. It\'s only visible when quality is set.',
+              trigger: 'click'
+            }"></i></div>
+          </th>
+          <th scope="col">Awakening</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="inner-tr" *ngFor="let commander of visibleCommanders">
+          <td style="font-weight: bold;">{{ commander.name }}</td>
+          <td>{{ commander.preferredGift }}</td>
+          <td style="text-align: center;">
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.aptitude>=1}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.aptitude>=2}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.aptitude>=3}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.aptitude>=4}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.aptitude>=5}"></span>
+          </td>
+          <td style="text-align: center;">
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.finance>=1}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.finance>=2}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.finance>=3}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.finance>=4}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.finance>=5}"></span>
+          </td>
+          <td style="text-align: center;">
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.command>=1}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.command>=2}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.command>=3}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.command>=4}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.command>=5}"></span>
+          </td>
+          <td style="text-align: center;">
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.combat>=1}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.combat>=2}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.combat>=3}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.combat>=4}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.combat>=5}"></span>
+          </td>
+          <td style="text-align: center;">
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.leadership>=1}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.leadership>=2}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.leadership>=3}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.leadership>=4}"></span>
+            <span class="fa fa-star" [ngClass]="{'checked' : commander.leadership>=5}"></span>
+          </td>
+          <td><select
+              (change)="commander.playerCommander.maxLevel = +$event.target.value; checkMaxLevel(commander.playerCommander); onValuesChanged();">
+              <option *ngFor="let quality of getMaxLevels()" value="{{ quality.MaxLevel }}"
+                [style.color]="quality.Color" [selected]="commander.playerCommander.maxLevel == quality.MaxLevel">
+                {{quality.Title}}</option>
+            </select></td>
+          <td style="white-space: nowrap; height: 20px; text-align: center;"><button
+              (click)="decreaseLevel(commander.playerCommander)"
+              *ngIf="commander.playerCommander.maxLevel != 0">-</button><select
+              *ngIf="commander.playerCommander.maxLevel != 0"
+              (change)="commander.playerCommander.currentLevel = +$event.target.value;onValuesChanged()">
+              <option *ngFor="let level of getRange(commander.playerCommander.maxLevel)"
+                [selected]="commander.playerCommander.currentLevel == level" value="{{ level }}">{{ level }}</option>
+            </select><button (click)="increaseLevel(commander.playerCommander)"
+              *ngIf="commander.playerCommander.maxLevel != 0">+</button></td>
+            <td style="white-space: nowrap; height: 20px; text-align: center;"><select *ngIf="commander.awakable == true"
+                (change)="commander.playerCommander.awakeningLevel = +$event.target.value; onValuesChanged();">
+                <option value="0" [selected]="commander.playerCommander.awakeningLevel == 0">-</option>
+                <option value="1" [selected]="commander.playerCommander.awakeningLevel == 1">1</option>
+                <option value="2" [selected]="commander.playerCommander.awakeningLevel == 2">2</option>
+                <option value="3" [selected]="commander.playerCommander.awakeningLevel == 3">3</option>
+                <option value="4" [selected]="commander.playerCommander.awakeningLevel == 4">4</option>
+              </select></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <table class="pure-table" style="width: 220px;">
+      <thead>
+        <tr style="font-size: 11pt;">
+          <th colspan="2">
+            <div class="container" style="justify-content: space-between;">Weights <i class="fa fa-question" tippy
+                [tippyOptions]="{
+            arrow: true,
+            content: 'This section allows you to change the attribute weight values which are used in upgrade priority calculations. Higher a value means that attribute will have more effect on the calculation.',
+            trigger: 'click'
+          }"></i></div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="inner-tr">
+          <td style="padding-left: 12px;">Aptitude</td>
+          <td style="text-align: right; padding-right: 12px;"><input type="number" min="0" max="10"
+              [(ngModel)]="weights.aptitude" name="aptitude" (change)="onWeightsChanged()"></td>
+        </tr>
+        <tr class="inner-tr">
+          <td style="padding-left: 12px;">Finance</td>
+          <td style="text-align: right; padding-right: 12px;"><input type="number" min="0" max="10"
+              [(ngModel)]="weights.finance" name="finance" (change)="onWeightsChanged()"></td>
+        </tr>
+        <tr class="inner-tr">
+          <td style="padding-left: 12px;">Command</td>
+          <td style="text-align: right; padding-right: 12px;"><input type="number" min="0" max="10"
+              [(ngModel)]="weights.command" name="command" (change)="onWeightsChanged()"></td>
+        </tr>
+        <tr class="inner-tr">
+          <td style="padding-left: 12px;">Combat</td>
+          <td style="text-align: right; padding-right: 12px;"><input type="number" min="0" max="10"
+              [(ngModel)]="weights.combat" name="combat" (change)="onWeightsChanged()"></td>
+        </tr>
+        <tr class="inner-tr">
+          <td style="padding-left: 12px;">Leadership</td>
+          <td style="text-align: right; padding-right: 12px;"><input type="number" min="0" max="10"
+              [(ngModel)]="weights.leadership" name="leadership" (change)="onWeightsChanged()"></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table class="pure-table" style="width: 220px;">
+      <thead>
+        <tr style="font-size: 11pt;">
+          <th>Settings</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="inner-tr">
+          <td style="padding: 8px;padding-left: 12px; "><input type="checkbox"
+              [(ngModel)]="profileSettings.hideUnlocked" (change)="saveProfileSettings()" /> Hide Locked Commanders</td>
+        </tr>
+        <tr class="inner-tr">
+          <td style="padding: 8px;padding-left: 12px; "><input type="checkbox"
+              [(ngModel)]="profileSettings.suggestUpgrades" (change)="saveProfileSettings()" /> Suggest Quality Upgrades
+          </td>
+        </tr>
+        <tr class="inner-tr">
+          <td style="padding: 8px;padding-left: 12px; "><input type="checkbox"
+              [(ngModel)]="profileSettings.suggestUnlocks" (change)="saveProfileSettings()" /> Suggest Commander Unlocks
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <div *ngFor="let giftType of giftTypes">
+      <table class="pure-table priorities" style="margin-bottom: 8px;">
+        <thead>
+          <tr style="font-size: 11pt;">
+            <th colspan="3">
+              <div class="container" style="justify-content: space-between;">{{ giftType }} <i class="fa fa-question"
+                  tippy [tippyOptions]="{
+              arrow: true,
+              content: 'In this section, you can find the list of commander(s) which prefer this gift type, you own and not maxed. The numbers next to them shows the total value of upgrading them to next friendship level based on the commanders friendship attribute stars and weights you entered. The formula used for the calculation is: (sum of (commander stars * weight)) / xp required for next level * 1000',
+              trigger: 'click'
+            }"></i></div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="inner-tr" *ngFor="let commander of getCommandersByGiftType(giftType)">
+            <td style="width: 180px; padding-left: 12px; padding-top: 8px;">{{ commander.name }}</td>
+            <td style="width: 40px; text-align: right; padding-right: 12px; padding-top: 8px;"> {{ commander.cost }}
+            </td>
+            <td style="font-size: 14px; padding-bottom: 3px;"><i class="fa fa-lock" style="color: red;"
+                *ngIf="commander.needsUnlock == true" tippy data-tippy-content="Needs Unlock"></i><i
+                class="fa fa-caret-up" style="color: green;" *ngIf="commander.needsUpgrade == true" tippy
+                data-tippy-content="Needs Quality Upgrade"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+<div style="text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">Created by Adain Rivers of
+  RYS from K21</div>
+<div style="text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-bottom: 20px;">Many
+  thanks to all contributors for their valuable support and feedback.</div>
