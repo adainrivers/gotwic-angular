@@ -675,6 +675,17 @@ export class Commanders {
                     "combat": 4,
                     "leadership": 0,
                     "awakable": true
+                },
+                {
+                    "id": "cossomo",
+                    "name": "Cossomo",
+                    "preferredGift": GiftType.Dessert,
+                    "aptitude": 5,
+                    "finance": 5,
+                    "command": 0,
+                    "combat": 4,
+                    "leadership": 0,
+                    "awakable": true
                 }
             ];
     }
